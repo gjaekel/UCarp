@@ -35,6 +35,7 @@ static void usage(void)
         "--help (-h): summary of command-line options\n"
         "--advbase=<seconds> (-b <seconds>): advertisement frequency\n"
         "--advskew=<skew> (-k <skew>): advertisement skew (0-255)\n"
+        "--garp-timeout=<seconds> (-g <seconds>): keep sending GARP packets during timeout after becoming master\n"
         "--upscript=<file> (-u <file>): run <file> to become a master\n"
         "--downscript=<file> (-d <file>): run <file> to become a backup\n"
         "--deadratio=<ratio> (-r <ratio>): ratio to consider a host as dead\n"
@@ -192,6 +193,10 @@ int main(int argc, char *argv[])
         }
         case 'k': {
             advskew = (unsigned char) strtoul(optarg, NULL, 0);
+            break;
+        }
+        case 'g': {
+            garp_timeout = (int) strtol(optarg, NULL, 0);
             break;
         }
         case 'd': {

@@ -311,13 +311,12 @@ static void carp_send_ad(struct carp_softc *sc)
 
     ALLOCA_FREE(pkt);
 
-    if (sc->sc_delayed_arp > 0)
-        sc->sc_delayed_arp--;
-    if (sc->sc_delayed_arp == 0) {
+    if (sc->sc_delayed_arp > 0) {
         if (sc->sc_state == MASTER) {
             gratuitous_arp(dev_desc_fd);
         }
-        sc->sc_delayed_arp = -1;
+
+        sc->sc_delayed_arp--;
     }
     if (advbase != 255 || advskew != 255) {
         timeradd(&now, &tv, &sc->sc_ad_tmo);
@@ -385,8 +384,8 @@ static void carp_master_down(struct carp_softc *sc)
     case BACKUP:
         carp_set_state(sc, MASTER);
         carp_send_ad(sc);
-        /* Schedule a delayed ARP request to deal w/ some L3 switches */
-        sc->sc_delayed_arp = 2;
+        /* Schedule delayed ARP requests to deal w/ some L3 switches */
+        sc->sc_delayed_arp = garp_timeout;
 #ifdef INET6
         carp_send_na(sc);
 #endif /* INET6 */
@@ -587,9 +586,9 @@ static void packethandler(unsigned char *dummy,
                 (timercmp(&sc_tv, &ch_tv, ==) &&
                     iphead.ip_src.s_addr > srcip.s_addr)) {
                 gratuitous_arp(dev_desc_fd);
-                sc.sc_delayed_arp = 2; /* and yet another in 2 ticks */
+                sc.sc_delayed_arp = garp_timeout; /* and until garp_timeout */
                 logfile(LOG_WARNING, _("Non-preferred master advertising: "
-                                       "reasserting control of VIP with another gratuitous arp"));
+                                       "reasserting control of VIP with gratuitous arps"));
             }
             break;
         case BACKUP:

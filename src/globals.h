@@ -18,6 +18,7 @@ GLOBAL0(struct in_addr vaddr);
 GLOBAL(unsigned char advbase, DEFAULT_ADVBASE);
 GLOBAL(unsigned int dead_ratio, DEFAULT_DEAD_RATIO);
 GLOBAL0(unsigned char advskew);
+GLOBAL(int garp_timeout, DEFAULT_GARP_TIMEOUT);
 GLOBAL0(char *upscript);
 GLOBAL0(char *downscript);
 GLOBAL0(signed char debug);
