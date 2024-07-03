@@ -132,7 +132,7 @@ static unsigned short cksum(const void * const buf_, const size_t len)
     return (unsigned short) ~sum;
 }
 
-static void carp_hmac_generate(struct carp_softc *sc, u_int32_t counter[2],
+static void carp_hmac_generate(struct carp_softc *sc, void *counter,
                                unsigned char *md)
 {
     SHA1_CTX ctx;
@@ -140,7 +140,7 @@ static void carp_hmac_generate(struct carp_softc *sc, u_int32_t counter[2],
     /* fetch first half of inner hash */
     memcpy(&ctx, &sc->sc_sha1, sizeof ctx);
 
-    SHA1Update(&ctx, (void *) counter, sizeof sc->sc_counter);
+    SHA1Update(&ctx, counter, sizeof sc->sc_counter);
 
     SHA1Final(md, &ctx);
 
@@ -630,12 +630,12 @@ static void packethandler(unsigned char *dummy,
     }
 }
 
-static RETSIGTYPE sighandler_exit(const int sig)
+static void sighandler_exit(int sig)
 {
     received_signal=15;
 }
 
-static RETSIGTYPE sighandler_usr(const int sig)
+static void sighandler_usr(int sig)
 {
     switch (sig) {
     case SIGUSR1:
