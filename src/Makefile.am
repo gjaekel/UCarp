@@ -1,6 +1,6 @@
 localedir = $(datadir)/locale
 
-INCLUDES = -DLOCALEDIR=\"$(localedir)\"
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\"
 
 sbin_PROGRAMS = \
 	ucarp
